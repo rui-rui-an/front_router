@@ -52,7 +52,7 @@ export default {
         if (valid) {
           // 模拟登录接口去请求用户数据
           setTimeout(() => {
-            // 这里的res就是模拟后台返回的用户数据（不包含路由菜单，一般菜单是由单独的一个接口返回）
+            // 这里的res就是模拟后台返回的用户数据（不包含用户角色，一般角色是由单独的一个接口返回）
             const res = dynamicUserData.filter((item) => item.username === this.user.username)[0]
             console.log(res)
             // 存储用户的信息及token到vuex,并做sessionStorage持久化处理

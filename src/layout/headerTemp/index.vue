@@ -19,36 +19,38 @@
 </template>
 <script>
 import { Message } from "element-ui"
-import {mapState} from 'vuex'
+import { mapState } from "vuex"
 export default {
   name: "header-temp-container",
-  data () {
-    return {
-    }
+  data() {
+    return {}
   },
-  computed:{
-    ...mapState('User',{
-      avatar:'avatar',
-      username:'username',
-      desc:'desc'
-    })
+  computed: {
+    ...mapState("User", {
+      avatar: "avatar",
+      username: "username",
+      desc: "desc",
+    }),
   },
   methods: {
     // 退出登录
-    handleLogout () {
-      console.log(111);
+    handleLogout() {
       window.localStorage.removeItem("token")
-      this.$store.commit('User/removeUserInfo')
-      Message({ type: 'success', message: "退出登录", showClose: true, duration: 3000 })
+      // 清除用户信息
+      this.$store.commit("User/removeUserInfo")
+      // 清除角色权限列表
+      this.$store.commit("permission/setRoles", [])
+      // 清除角色权限数组
+      this.$store.commit("permission/SET_ROUTES", [])
+      Message({
+        type: "success",
+        message: "退出登录",
+        showClose: true,
+        duration: 3000,
+      })
       this.$router.push({ path: "/login" })
-      // if (key == "logout") {
-      //   window.localStorage.removeItem("userInfo")
-      //   Message({ type: 'success', message: "退出登录", showClose: true, duration: 3000 })
-      //   this.$router.replace({ path: "/login" })
-      //   location.reload()
-      // }
-    }
-  }
+    },
+  },
 }
 </script>
 <style scoped>
@@ -79,4 +81,5 @@ export default {
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-around;
-}</style>
+}
+</style>

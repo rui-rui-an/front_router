@@ -1,32 +1,7 @@
 import router from './index'
-import Layout from '../layout/index'
 import NProgress from 'nprogress' // progress bar
 import store from '@/store'
 import menu from '@/mock/menu.js'
-
-// 路由拼接
-function loadView(view) {
-  return () => import(`@/views/${view}`)
-}
-// 路由过滤   遍历路由 转换为组件对象和路径
-function filterASyncRoutes(data) {
-  // console.log(data)
-  const routes = data.filter(item => {
-    if (item['component'] === 'Layout') {
-      item.component = Layout
-    } else {
-      item['component'] = loadView(item['component'])
-    }
-    // 路由递归，转换组件对象和路径
-    if (item['children'] && item['children'].length > 0) {
-      item['children'] = filterASyncRoutes(item.children)
-    }
-    return true
-  })
-  // 排序
-  routes.sort((a, b) => a['id'] - b['id'])
-  return routes
-}
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -40,19 +15,18 @@ router.beforeEach((to, from, next) => {
     next()
     return false
   }
-  // 有token（代表了有用户信息，但是不确定有没有路由信息）
+  // 有token（代表了有用户信息，但是不确定有没有角色权限数组）
   if (store.state.User.token) {
-    // 判断当前用户是否是登录状态， 是登录状态则一定有路由，直接放行，不是登录状态则去获取路由菜单登录
+    // 判断当前用户是否有角色权限数组， 是登录状态则一定有路由，直接放行，不是登录状态则去获取路由菜单登录
     // 刷新时hasRoles会重置为false，重新去获取 用户的角色列表
     const hasRoles = store.state.permission.roles && store.state.permission.roles.length > 0
     if (!hasRoles) {
       setTimeout(async () => {
         const roles = menu.filter(item => item.token === store.state.User.token)[0].roles
+        // 将该角色权限数组存储到vuex中
         store.commit('permission/setRoles', roles)
         // 根据返回的角色信息去过滤异步路由中该角色可访问的页面
         const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
-        // console.log(store.commit('permission/generateRoutes'))
-        console.log(accessRoutes)
         // dynamically add accessible routes
         router.addRoutes(accessRoutes)
         // hack方法

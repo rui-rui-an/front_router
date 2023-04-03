@@ -5,22 +5,16 @@ import { asyncRoutes, constantRoutes } from '@/router'
  * @param roles
  */
 export function filterAsyncRoutes(routes, roles) {
-  console.log(routes)
-  // console.log(roles)
   const res = []
   routes.forEach(route => {
     const tmp = { ...route }
-    // console.log(tmp)
-    // console.log(hasPermission(roles, tmp))
     if (hasPermission(roles, tmp)) {
       if (tmp.children) {
         tmp.children = filterAsyncRoutes(tmp.children, roles)
       }
-      // console.log('admin页面走了嘛?');
       res.push(tmp)
     }
   })
-  // console.log(res)
   return res
 }
 
@@ -46,7 +40,6 @@ const mutations = {
   },
   SET_ROUTES: (state, routes) => {
     state.addRoutes = routes
-    console.log(constantRoutes)
     state.routes = constantRoutes.concat(routes)
   },
 }
