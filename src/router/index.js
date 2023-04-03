@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Layout from '@/layout'
 
 Vue.use(VueRouter)
 
@@ -11,7 +12,7 @@ VueRouter.prototype.push = function push(location) {
 }
 
 // 定义好静态路由
-const routes = [
+export const constantRoutes = [
   {
     path: '/login',
     name: 'login',
@@ -20,10 +21,75 @@ const routes = [
   },
 ]
 
+export const asyncRoutes = [
+  {
+    id: 1,
+    name: '/',
+    path: '/',
+    component: Layout,
+    redirect: '/index',
+    hidden: false,
+    children: [{ name: 'index', path: '/index', meta: { title: 'index' }, component: () => import('@/views/index') }],
+  },
+  {
+    id: 2,
+    name: '/form',
+    path: '/form',
+    component: Layout,
+    redirect: '/form/index',
+    hidden: false,
+    children: [{ name: '/form/index', path: '/form/index', meta: { title: 'form' }, component: () => import('@/views/form') }],
+  },
+  {
+    id: 3,
+    name: '/example',
+    path: '/example',
+    component: Layout,
+    redirect: '/example/tree',
+    meta: { title: 'example' },
+    hidden: false,
+    children: [
+      { name: '/tree', path: '/example/tree', meta: { title: 'tree' }, component: () => import('@/views/tree') },
+      { name: '/copy', path: '/example/copy', meta: { title: 'copy' }, component: () => import('@/views/tree/copy') },
+    ],
+  },
+  {
+    id: 4,
+    name: '/table',
+    path: '/table',
+    component: Layout,
+    redirect: '/table/index',
+    hidden: false,
+    children: [{ name: '/table/index', path: '/table/index', meta: { title: 'table' }, component: () => import('@/views/table') }],
+  },
+  {
+    id: 5,
+    name: '/admin',
+    path: '/admin',
+    component: Layout,
+    redirect: '/admin/index',
+    hidden: false,
+    meta: { roles: ['admin'] },
+    children: [{ name: '/admin/index', path: '/admin/index', meta: { title: 'admin', roles: ['admin'] }, component: () => import('@/views/admin') }],
+  },
+  {
+    id: 6,
+    name: '/people',
+    path: '/people',
+    component: Layout,
+    redirect: '/people/index',
+    hidden: false,
+    meta: { roles: ['admin', 'common_user'] },
+    children: [{ name: '/people/index', path: '/people/index', meta: { title: 'people', roles: ['admin', 'common_user'] }, component: () => import('@/views/people') }],
+  },
+   // 404 page must be placed at the end !!!
+  //  { path: '*', redirect: '/404', hidden: true }
+]
+
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes,
+  routes: constantRoutes,
 })
 
 export default router

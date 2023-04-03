@@ -43,21 +43,26 @@ router.beforeEach((to, from, next) => {
   // 有token（代表了有用户信息，但是不确定有没有路由信息）
   if (store.state.User.token) {
     // 判断当前用户是否是登录状态， 是登录状态则一定有路由，直接放行，不是登录状态则去获取路由菜单登录
-    // 刷新时store.state.routerList.hasRoutes会重置为false，重新去获取 异步路由
-    if (!store.state.routerList.hasRoutes) {
-      setTimeout(() => {
-        const res = menu.filter(item => item.token === store.state.User.token)[0].routes
-        const asyncRouter = filterASyncRoutes(res) // 递归处理后台返回的路由
-        store.commit('routerList/setRouterList', asyncRouter) // 存储到异步的路由到vuex
-        store.commit('routerList/setHasRoutes', true) // 设置登录状态为true
-        router.addRoutes(asyncRouter) // 动态添加可访问路由表
-        next({ ...to, replace: true }) // hack方法 确
+    // 刷新时hasRoles会重置为false，重新去获取 用户的角色列表
+    const hasRoles = store.state.permission.roles && store.state.permission.roles.length > 0
+    if (!hasRoles) {
+      setTimeout(async () => {
+        const roles = menu.filter(item => item.token === store.state.User.token)[0].roles
+        store.commit('permission/setRoles', roles)
+        // 根据返回的角色信息去过滤异步路由中该角色可访问的页面
+        const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+        // console.log(store.commit('permission/generateRoutes'))
+        console.log(accessRoutes)
+        // dynamically add accessible routes
+        router.addRoutes(accessRoutes)
+        // hack方法
+        next({ ...to, replace: true })
       }, 500)
     } else {
       next() //当有用户权限的时候，说明所有可访问路由已生成 如访问没权限的全面会自动进入404页面
     }
-  }else {
-    next({path:'/login'})
+  } else {
+    next({ path: '/login' })
   }
 })
 

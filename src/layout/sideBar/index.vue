@@ -1,7 +1,7 @@
 <template>
   <el-menu mode="vertical" unique-opened :default-active="$route.path" background-color="#304156" text-color="#fff"
     active-text-color="#409EFF">
-    <sidebar-item :routes="routerList"></sidebar-item>
+    <sidebar-item :routes="routes"></sidebar-item>
   </el-menu>
 </template>
 
@@ -12,15 +12,15 @@ import sidebarItem from "./sidebarItem";
 export default {
   components: { sidebarItem },
   computed: {
-    ...mapState('routerList',{
-      routerList: 'routerList'
+    ...mapState('permission',{
+      routes: 'routes'
     })
     // routes() {
     //   return this.$router.options.routes;
     // },
   },
   created () {
-    console.log(this.routerList)
+    console.log(this.routes)
   },
 };
 </script>

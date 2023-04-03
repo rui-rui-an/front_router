@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import User from './modules/user'
-import routerList from './modules/routerList'
+import permission from './modules/permission'
 import createPersistedState from 'vuex-persistedstate'
 Vue.use(Vuex)
 
@@ -11,7 +11,7 @@ export default new Vuex.Store({
   actions: {},
   modules: {
     User,
-    routerList,
+    permission,
   },
   plugins: [
     createPersistedState({

@@ -7,7 +7,7 @@
           <el-input type="text" prefix-icon="el-icon-user" placeholder="请输入用户名" v-model="user.username" />
         </el-form-item>
         <el-form-item prop="password">
-          <el-input type="password" prefix-icon="el-icon-view" placeholder="请输入密码" v-model="user.password" />
+          <el-input type="password" prefix-icon="el-icon-view" @keyup.enter.native="login" placeholder="请输入密码" v-model="user.password" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" class="btn-login" @click="login">登录</el-button>
@@ -33,8 +33,8 @@ export default {
   data () {
     return {
       user: {
-        username: "admin",
-        password: "654321"
+        username: "people",
+        password: "123456"
       },
       rules: {
         username: [
@@ -56,7 +56,7 @@ export default {
             const res = dynamicUserData.filter((item) => item.username === this.user.username)[0]
             console.log(res)
             // 存储用户的信息及token到vuex,并做sessionStorage持久化处理
-            this.$store.commit('User/saveUserInfo',res)
+            this.$store.commit('User/saveUserInfo', res)
             Message({ type: 'success', message: "登录成功", showClose: true, duration: 3000 })
             this.$router.push({ path: "/index" })
           }, 1000)
